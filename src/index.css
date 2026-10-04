@@ -1,0 +1,305 @@
+/* ============================================================================
+   TEMPLATE 10 - TERRACE PROPERTY
+   Design read: residential property listings for a small neighbourhood agency.
+   Cool grey canvas, one navy accent, Newsreader display serif over Manrope
+   body, hard 3px radius. Editorial rather than luxury: real figures, real
+   states, plain data.
+
+   WHY A SERIF DISPLAY HERE: the property listing is a print-derived genre
+   (broadsheet property pages, estate agents' catalogues). Newsreader is a low
+   contrast text serif that holds ink at small sizes, so headlines and section
+   titles read as set text rather than UI chrome. Every piece of interface
+   copy, metadata, price, and form label is set in Manrope, because a price is
+   data and data does not want to be decorative. The serif is confined to
+   headings; the dollar sign in particular is set in the sans, where its stroke
+   does not read as a rule through the numeral.
+
+   VARIANCE 5 / MOTION 3 / DENSITY 4
+
+   Theme lock: light only, one cool neutral temperature, one accent (navy)
+   reused identically in every section, one radius (3px).
+   ========================================================================= */
+
+@import 'tailwindcss';
+
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/manrope';
+
+/* --------------------------------------------------------------------------
+   TOKENS
+   -------------------------------------------------------------------------- */
+@theme {
+  --font-display: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Manrope Variable', system-ui, -apple-system, sans-serif;
+  /* Platform mono only: small metadata never gets a decorative webfont. */
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Cool greys, one temperature end to end. */
+  --color-canvas: #f4f5f7;
+  --color-surface: #e9ebef;
+  --color-raised: #ffffff;
+  --color-ink: #101520;
+  --color-body: #4c5462;
+  --color-mute: #79828f;
+  --color-hairline: #d7dbe2;
+
+  /* The single accent. Desaturated navy, identical in every section. */
+  --color-accent: #16365c;
+  --color-accent-soft: #e2e9f2;
+  --color-on-accent: #ffffff;
+}
+
+:root {
+  --radius: 3px;
+}
+
+/* One radius, applied everywhere: cards, buttons, inputs, portrait tiles. */
+* {
+  border-radius: var(--radius);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-body);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   COMPONENTS
+   -------------------------------------------------------------------------- */
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* ---- Display (Newsreader) ---------------------------------------------
+     A text serif tracks tighter than a grotesque but must not pass -0.03em
+     or the serifs collide at display sizes. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .display-xl {
+    font-size: clamp(2.3rem, 4.9vw, 3.9rem);
+    line-height: 1.04;
+  }
+
+  .display-lg {
+    font-size: clamp(1.9rem, 3.8vw, 2.9rem);
+    line-height: 1.06;
+  }
+
+  .display-md {
+    font-size: clamp(1.45rem, 2.5vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    max-width: 58ch;
+    color: var(--color-body);
+  }
+
+  /* Prices are data, so they are set in the sans with tabular figures.
+     Tabular keeps a column of prices optically aligned and stops the
+     figures from shifting as a filter changes the set. */
+  .price {
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  /* A completed sale keeps its real number on the page. The rule through the
+     figure is the convention for a closed price, and it keeps the card
+     legible as information rather than as a disabled control. */
+  .price-closed {
+    color: var(--color-mute);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-hairline);
+    text-decoration-thickness: 2px;
+  }
+
+  /* Small mono metadata line. Two across the page against a budget of
+     ceil(6 sections / 3) = 2, or ceil(7 / 3) = 3 if the nav and footer are
+     counted. Spent on the hero and the listings grid. */
+  .micro {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-mute);
+  }
+
+  /* Listing state. Not a pill and never overlaid on the photograph: it sits
+     in the card body so it survives a filter change and reads as a status
+     line rather than a badge stuck to an image. */
+  .state {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .state-open {
+    color: var(--color-accent);
+  }
+
+  .state-pending {
+    color: var(--color-ink);
+  }
+
+  .state-closed {
+    color: var(--color-body);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 0.8125rem 1.5rem;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease,
+      transform 120ms ease, border-color 160ms ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .btn-primary:hover {
+    background: #102a48;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-hairline);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-ink);
+  }
+
+  .frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* A completed sale keeps its photograph, pulled back a little in colour so
+     the open instructions read first without hiding what was sold. */
+  .frame-closed img {
+    filter: saturate(0.72) contrast(0.98);
+  }
+
+  /* One soft shadow, tinted toward the cool background hue. Never pure black
+     on a light canvas. */
+  .lift {
+    box-shadow: 0 1px 2px rgba(16, 21, 32, 0.04),
+      0 18px 40px -26px rgba(22, 54, 92, 0.34);
+  }
+
+  .field {
+    width: 100%;
+    background: var(--color-raised);
+    border: 1px solid var(--color-hairline);
+    padding: 0.75rem 0.875rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-ink);
+    transition: border-color 140ms ease;
+  }
+
+  .field::placeholder {
+    color: var(--color-mute);
+  }
+
+  .field:hover {
+    border-color: #b9bfc9;
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@source "./**/*.{tsx,ts}";
